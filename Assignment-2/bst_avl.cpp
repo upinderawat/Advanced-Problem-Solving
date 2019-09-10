@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "bst_avl.h"
 #define ll long long
 #ifdef DEBUG
 #define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
@@ -13,50 +14,50 @@
 
 //test cases build from 
 //https://stackoverflow.com/questions/3955680/how-to-check-if-my-avl-tree-implementation-is-correct
-typedef struct node{
-	int ht;//ht of node 
-	ll val;
-	struct node* left;
-	struct node* right;
-	node(int val):val(val), left(nullptr), right(nullptr), ht(0){}
-}node;
-
-typedef struct AVL{	
-	node* root;
-	AVL():root(nullptr){}
-	node* add_node(node*, ll);
-	node* remove_node(node*, ll);
-	node* find_node(node*, ll);
-	void preorder(node *);
-	void postorder(node *);
-	void inorder(node *);
-	ll find_ht(node*);
-	node* left_left(node*, node*, node* );
-	node* left_right(node*, node*, node* );
-	node* right_left(node*, node*, node* );
-	node* right_right(node*, node*, node* );
-}AVL;
-void AVL::preorder(node *root){
-	if(!root) return;
-	std::cout<<root->val<<" ";
-	DEBUG_MSG_VAL_HT(root->val, root->ht);
-	preorder(root->left);
-	preorder(root->right);
-}
-void AVL::postorder(node *root){
-	if(!root) return;
-	postorder(root->left);
-	postorder(root->right);
-	std::cout<<root->val<<" ";
-	DEBUG_MSG_VAL_HT(root->val, root->ht);
-	
-}
-void AVL::inorder(node *root){
-	if(!root) return;
-	inorder(root->left);
-	std::cout<<root->val<<" ";
-	DEBUG_MSG_VAL_HT(root->val, root->ht);
-	inorder(root->right);
+node* AVL::add_node(node* root, ll val){
+	if(root == nullptr){
+		return new node(val);
+	}
+	else{	
+		if(root->val < val){
+			root->right = add_node(root->right, val);
+		}
+		else{
+			root->left = add_node(root->left, val);	
+		}
+		root->ht = 1 + std::max(find_ht(root->left), find_ht(root->right));
+		int bf;
+		bf = find_ht(root->left) - find_ht(root->right);
+		node *z, *y, *x;
+		z = root;
+		if(bf> 1){
+			y = z->left;
+			if(y->val > val){
+				//L-L rot
+				x = y->left;
+				root = left_left(z, y, x);
+			}
+			else if(y->val < val){
+				//L-R rot
+				x = y->right;
+				root = left_right(z, y, x);
+			}
+		}
+		else if(bf < -1){
+			y = z->right;
+			if(y->val < val){
+				//RR rot
+				x = y->right;
+				root = right_right(z, y, x);
+			}
+			else if(y->val > val){
+				//R-L rot
+				x = y->left;
+				root = right_left(z, y, x);
+			}
+		}
+	}
+	return root;
 }
 node* AVL::remove_node(node* root, ll val){
 	if(root->val == val){
@@ -206,51 +207,26 @@ node* AVL::right_left(node* n, node* c, node* gc){
 	return gc;	
 }
 
-ll AVL::find_ht(node* root){
-	return root==nullptr ? -1 : root->ht ; 
+ll AVL::find_ht(node* root){return root==nullptr ? -1 : root->ht ;}
+void AVL::preorder(node *root){
+	if(!root) return;
+	std::cout<<root->val<<" ";
+	DEBUG_MSG_VAL_HT(root->val, root->ht);
+	preorder(root->left);
+	preorder(root->right);
 }
-node* AVL::add_node(node* root, ll val){
-	if(root == nullptr){
-		return new node(val);
-	}
-	else{	
-		if(root->val < val){
-			root->right = add_node(root->right, val);
-		}
-		else{
-			root->left = add_node(root->left, val);	
-		}
-		root->ht = 1 + std::max(find_ht(root->left), find_ht(root->right));
-		int bf;
-		bf = find_ht(root->left) - find_ht(root->right);
-		node *z, *y, *x;
-		z = root;
-		if(bf> 1){
-			y = z->left;
-			if(y->val > val){
-				//L-L rot
-				x = y->left;
-				root = left_left(z, y, x);
-			}
-			else if(y->val < val){
-				//L-R rot
-				x = y->right;
-				root = left_right(z, y, x);
-			}
-		}
-		else if(bf < -1){
-			y = z->right;
-			if(y->val < val){
-				//RR rot
-				x = y->right;
-				root = right_right(z, y, x);
-			}
-			else if(y->val > val){
-				//R-L rot
-				x = y->left;
-				root = right_left(z, y, x);
-			}
-		}
-	}
-	return root;
+void AVL::postorder(node *root){
+	if(!root) return;
+	postorder(root->left);
+	postorder(root->right);
+	std::cout<<root->val<<" ";
+	DEBUG_MSG_VAL_HT(root->val, root->ht);
+	
+}
+void AVL::inorder(node *root){
+	if(!root) return;
+	inorder(root->left);
+	std::cout<<root->val<<" ";
+	DEBUG_MSG_VAL_HT(root->val, root->ht);
+	inorder(root->right);
 }
