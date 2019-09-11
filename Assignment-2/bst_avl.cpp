@@ -182,8 +182,8 @@ ll AVL:: kth_smallest(node* root, ll k){
 	//error checking to be done at handler side
 	//check for nullptr and k > root->num
 	node* tmp=root;
-	ll smaller_than_k, greater_than_k;
-	smaller_than_k = greater_than_k = 0;
+	ll smaller_than_k;
+	smaller_than_k = 0;
 	while(tmp){
 		if(smaller_than_k + find_num(tmp->left) + 1 == k){
 			return tmp->val;
@@ -196,6 +196,7 @@ ll AVL:: kth_smallest(node* root, ll k){
 			tmp = tmp->left;
 		}
 	}
+	return -1;//non reachable; added to avoid warning on some cc
 }
 ll AVL:: nth_largest(node* root, ll n){
 	//handle out of bound in handler
@@ -203,6 +204,11 @@ ll AVL:: nth_largest(node* root, ll n){
 	if( k >= 0){
 		return kth_smallest(root, k);
 	}
+	else{
+		fprintf(stderr,"Invalid Value of n");
+		exit(1);
+	}
+	return -1;//to avoid warning on some cc
 }
 node* AVL::LCA(node* root, ll a, ll b){
 	//return nullptr for empty tree

@@ -2,8 +2,6 @@
 #include "bst_avl.h"
 int main(int argc, char const *argv[]){
 	AVL tree;
-	node* root=nullptr;
-//insert test cases
 	//{20, 4}
 	//{20, 4, 26, 3, 9}
 	//{20, 4, 26, 3, 9, 21, 30, 2, 7, 11}
@@ -11,13 +9,13 @@ int main(int argc, char const *argv[]){
 //delete test cases
 	//{5, 2, 8, 1, 3, 7, 10, 4, 6, 9, 11, 12};//{1, 3, 2};
 	for(auto u : v)
-		root = tree.add_node(root, u);
+		tree.root = tree.add_node(tree.root, u);
 
 	// root = tree.add_node(root, 8);
 	// root = tree.add_node(root, 15);
 	// root = tree.remove_node(root, 1);
-		root = tree.add_node(root, 5);
-	tree.preorder(root);
+		// tree.root = tree.add_node(tree.root, 5);
+	tree.preorder(tree.root);
 	std::cout<<"\n";
 	// std::cout<<"Closest: "<<tree.find_closest(root, 10)->val;
 	// for(int i=1; i<13; i++){
