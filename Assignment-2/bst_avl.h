@@ -3,10 +3,11 @@
 
 typedef struct node{
 	int ht;//ht of node 
+	int num;//number of nodes in rooted subtree 
 	ll val;
 	struct node* left;
 	struct node* right;
-	node(int val):val(val), left(nullptr), right(nullptr), ht(0){}
+	node(int val):val(val), left(nullptr), right(nullptr), ht(0), num(1){}
 }node;
 
 typedef struct AVL{	
@@ -16,7 +17,11 @@ typedef struct AVL{
 	node* remove_node(node*, ll);
 	node* find_node(node*, ll);
 	ll find_ht(node*);
-	node* find_closest(node*, ll);
+	//returns the number of nodes in subtree
+	ll find_num(node*);
+	//finds the closest value to a given value.
+	//if multiple satisfy the constraint, it will return the first closest encountered 
+	ll find_closest(node*, ll);
 	//types of traversals
 	void preorder(node *);
 	void postorder(node *);
