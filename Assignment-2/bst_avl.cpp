@@ -22,7 +22,10 @@ node* AVL::add_node(node* root, ll val){
 		return new node(val);
 	}
 	else{	
-		if(root->val < val){
+		if(root->val == val){
+			return root;
+		}
+		else if(root->val < val){
 			root->right = add_node(root->right, val);
 		}
 		else{
@@ -150,20 +153,20 @@ ll AVL::find_ht(node* root){return root==nullptr ? -1 : root->ht;}
 
 ll AVL::find_num(node* root){return root==nullptr ? 0 : root->num;}
 
-ll AVL::find_closest(node* root, ll val){
-	//returns LLONG_MAX on empty tree
-	ll closest_val = LLONG_MAX;
+node* AVL::find_closest(node* root, ll val){
+	//returns nullptr on empty tree
+	node* closest_node = root;
 	ll closest_dist = LLONG_MAX;
 	node *tmp = root;
 	while(tmp){
 		if(tmp->val == val){
-			return tmp->val;
+			return tmp;
 		}
 		if(abs(tmp->val - val) <= closest_dist){
-			//choose the closest_val to be lower limit in case of equal closest_dist incident
-			if((abs(tmp->val - val) < closest_dist) || (abs(tmp->val - val) == closest_dist) and tmp->val < closest_val){
+			//choose the closest_node to be lower limit in case of equal closest_dist incident
+			if((abs(tmp->val - val) < closest_dist) || (abs(tmp->val - val) == closest_dist) and tmp->val < closest_node->val){
 				closest_dist = abs(tmp->val - val);
-				closest_val = tmp->val;
+				closest_node = tmp;
 			}
 		}
 		if(tmp->val < val){
@@ -173,7 +176,7 @@ ll AVL::find_closest(node* root, ll val){
 			tmp = tmp->left;
 		}
 	}
-	return closest_val;
+	return closest_node;
 }
 ll AVL:: kth_smallest(node* root, ll k){
 	//error checking to be done at handler side
@@ -200,6 +203,71 @@ ll AVL:: nth_largest(node* root, ll n){
 	if( k >= 0){
 		return kth_smallest(root, k);
 	}
+}
+node* AVL::LCA(node* root, ll a, ll b){
+	//return nullptr for empty tree
+	node* tmp= root;
+	while(tmp){
+		if(tmp->val < a && tmp->val < b){
+			tmp = tmp->right;
+		}
+		else if(tmp->val > a && tmp->val > b){
+			tmp = tmp->left;
+		}
+		else{
+			break;
+		}
+	}
+	return tmp;
+}
+ll AVL::elements_ge_val(node* root, ll val){
+	ll ans=0;
+	node* tmp = root;
+	while(tmp){
+		if(tmp->val >= val){
+			ans += find_num(tmp->right) + 1;
+			tmp= tmp->left;
+		}
+		else if(tmp->val < val){
+			tmp = tmp->right;
+		}
+	}
+	return ans;
+}
+ll AVL::elements_le_val(node* root, ll val){
+	ll ans=0;
+	node* tmp = root;
+	while(tmp){
+		if(tmp->val <= val){
+			ans += find_num(tmp->left) + 1;
+			tmp= tmp->right;
+		}
+		else if(tmp->val > val){
+			tmp = tmp->left;
+		}
+	}
+	return ans;
+}
+ll AVL::elements_in_range(node* root, ll a, ll b){
+	//error handling for empty root needs to be checked
+	if( a > b ){
+		return 0;
+	}
+	ll res=0;
+	ll total_elements = find_num(root);
+	node* ap = find_closest(root, a);
+	node* bp = find_closest(root, b);
+	ll elements_ge_ap = elements_ge_val(root, ap->val);
+	ll elements_le_bp = elements_le_val(root, bp->val);
+	res = elements_ge_ap + elements_le_bp - total_elements; 
+	
+	if(ap->val < a){
+		res--;
+	}
+	if(bp->val > b){
+		res--;
+	}
+	return res;
 }
 void AVL::preorder(node *root){
 	if(!root) return;

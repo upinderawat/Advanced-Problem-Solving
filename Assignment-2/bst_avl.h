@@ -25,13 +25,24 @@ typedef struct AVL{
 	//returns the number of nodes in subtree
 	ll find_num(node*);
 	
-	//finds the closest value to a given value.
+	//finds the closest value to a given value i.e returns a_p <= a
 	//if multiple satisfy the constraint, it will return the first closest encountered 
-	ll find_closest(node*, ll);
+	node* find_closest(node*, ll);
 	
 	ll kth_smallest(node*, ll);
 
 	ll nth_largest(node* root, ll n);
+	
+	node* LCA(node*, ll, ll);
+	
+	//number of elements greater than or equal to particular value
+	ll elements_ge_val(node*, ll);
+
+	//number of elements greater than or equal to particular value
+	ll elements_le_val(node*, ll);
+	
+	//find number of elements in closed interval [a, b]
+	ll elements_in_range(node*, ll, ll);
 	
 	//types of traversals
 	void preorder(node *);
