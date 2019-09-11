@@ -146,7 +146,12 @@ node* AVL::find_node(node* root, ll val){
 		else return find_node(root->left, val);
 	}
 }
+ll AVL::find_ht(node* root){return root==nullptr ? -1 : root->ht;}
+
+ll AVL::find_num(node* root){return root==nullptr ? 0 : root->num;}
+
 ll AVL::find_closest(node* root, ll val){
+	//returns LLONG_MAX on empty tree
 	ll closest_val = LLONG_MAX;
 	ll closest_dist = LLONG_MAX;
 	node *tmp = root;
@@ -154,9 +159,12 @@ ll AVL::find_closest(node* root, ll val){
 		if(tmp->val == val){
 			return tmp->val;
 		}
-		if(abs(tmp->val - val) < closest_dist){
-			closest_dist = abs(tmp->val - val);
-			closest_val = tmp->val;
+		if(abs(tmp->val - val) <= closest_dist){
+			//choose the closest_val to be lower limit in case of equal closest_dist incident
+			if((abs(tmp->val - val) < closest_dist) || (abs(tmp->val - val) == closest_dist) and tmp->val < closest_val){
+				closest_dist = abs(tmp->val - val);
+				closest_val = tmp->val;
+			}
 		}
 		if(tmp->val < val){
 			tmp = tmp->right;
@@ -166,6 +174,53 @@ ll AVL::find_closest(node* root, ll val){
 		}
 	}
 	return closest_val;
+}
+ll AVL:: kth_smallest(node* root, ll k){
+	//error checking to be done at handler side
+	//check for nullptr and k > root->num
+	node* tmp=root;
+	ll smaller_than_k, greater_than_k;
+	smaller_than_k = greater_than_k = 0;
+	while(tmp){
+		if(smaller_than_k + find_num(tmp->left) + 1 == k){
+			return tmp->val;
+		}
+		else if(smaller_than_k + find_num(tmp->left) + 1 < k){
+			smaller_than_k = smaller_than_k + find_num(tmp->left) + 1;
+			tmp = tmp->right;
+		}
+		else if(smaller_than_k + find_num(tmp->left) + 1 > k){
+			tmp = tmp->left;
+		}
+	}
+}
+ll AVL:: nth_largest(node* root, ll n){
+	//handle out of bound in handler
+	ll k = root->num - n + 1;
+	if( k >= 0){
+		return kth_smallest(root, k);
+	}
+}
+void AVL::preorder(node *root){
+	if(!root) return;
+	std::cout<<root->val<<" ";
+	DEBUG_MSG_VAL_HT_NUM(root->val, root->ht, root->num);
+	preorder(root->left);
+	preorder(root->right);
+}
+void AVL::postorder(node *root){
+	if(!root) return;
+	postorder(root->left);
+	postorder(root->right);
+	std::cout<<root->val<<" ";
+	DEBUG_MSG_VAL_HT_NUM(root->val, root->ht, root->num);
+}
+void AVL::inorder(node *root){
+	if(!root) return;
+	inorder(root->left);
+	std::cout<<root->val<<" ";
+	DEBUG_MSG_VAL_HT_NUM(root->val, root->ht, root->num);
+	inorder(root->right);
 }
 node* AVL::left_left(node* n, node* c, node* gc){
 	//node, child and grandchild ->(z,y,x)
@@ -201,23 +256,6 @@ node* AVL::left_right(node* n, node* c, node* gc){
 
 	return gc;
 }
-node* AVL::right_right(node* n, node* c, node* gc){
-	//node, child and grandchild ->(z,y,x)
-	DEBUG_MSG("right right\n");
-	
-	n->right = c->left;
-	c->left = n;
-
-	//order is imp here; as n becomes the parent now, height of gc, n must be avail first
-	gc->ht = 1 + std::max(find_ht(gc->left), find_ht(gc->right));
-	n->ht = 1 + std::max(find_ht(n->left), find_ht(n->right));
-	c->ht = 1 + std::max(find_ht(c->left), find_ht(c->right));
-
-	gc->num = 1 + find_num(gc->left) + find_num(gc->right);
-	n->num = 1 + find_num(n->left) + find_num(n->right);
-	c->num = 1 + find_num(c->left) + find_num(c->right);
-	return c;
-}
 node* AVL::right_left(node* n, node* c, node* gc){
 	//node, child and grandchild ->(z,y,x)
 	DEBUG_MSG("right left\n");
@@ -236,27 +274,21 @@ node* AVL::right_left(node* n, node* c, node* gc){
 	gc->num = 1 + find_num(gc->left) + find_num(gc->right);
 	return gc;	
 }
+node* AVL::right_right(node* n, node* c, node* gc){
+	//node, child and grandchild ->(z,y,x)
+	DEBUG_MSG("right right\n");
+	
+	n->right = c->left;
+	c->left = n;
 
-ll AVL::find_ht(node* root){return root==nullptr ? -1 : root->ht;}
-ll AVL::find_num(node* root){return root==nullptr ? 0 : root->num;}
-void AVL::preorder(node *root){
-	if(!root) return;
-	std::cout<<root->val<<" ";
-	DEBUG_MSG_VAL_HT_NUM(root->val, root->ht, root->num);
-	preorder(root->left);
-	preorder(root->right);
+	//order is imp here; as n becomes the parent now, height of gc, n must be avail first
+	gc->ht = 1 + std::max(find_ht(gc->left), find_ht(gc->right));
+	n->ht = 1 + std::max(find_ht(n->left), find_ht(n->right));
+	c->ht = 1 + std::max(find_ht(c->left), find_ht(c->right));
+
+	gc->num = 1 + find_num(gc->left) + find_num(gc->right);
+	n->num = 1 + find_num(n->left) + find_num(n->right);
+	c->num = 1 + find_num(c->left) + find_num(c->right);
+	return c;
 }
-void AVL::postorder(node *root){
-	if(!root) return;
-	postorder(root->left);
-	postorder(root->right);
-	std::cout<<root->val<<" ";
-	DEBUG_MSG_VAL_HT_NUM(root->val, root->ht, root->num);
-}
-void AVL::inorder(node *root){
-	if(!root) return;
-	inorder(root->left);
-	std::cout<<root->val<<" ";
-	DEBUG_MSG_VAL_HT_NUM(root->val, root->ht, root->num);
-	inorder(root->right);
-}
+
