@@ -17,7 +17,7 @@ int main(int argc, char const *argv[]){
 		// tree.root = tree.add_node(tree.root, 5);
 	tree.preorder(tree.root);
 	std::cout<<"\n";
-	// std::cout<<"Closest: "<<tree.find_closest(root, 10)->val;
+	std::cout<<"Closest: "<<tree.find_closest(tree.root, -999)->val;
 	// for(int i=1; i<13; i++){
 	// 	std::cout<<tree.nth_largest(root, i)<<" ";
 	// }
