@@ -301,7 +301,7 @@ node* AVL::left_left(node* n, node* c, node* gc){
 	DEBUG_MSG("left left\n");
 	n->left = c->right;
 	c->right = n;
-	//order is imp here; as n becomes the parent now, height of gc, n must be avail first
+	//order is imp here; as c becomes the parent now, height of gc, n must be avail first
 	gc->ht = 1 + std::max(find_ht(gc->left), find_ht(gc->right));
 	n->ht = 1 + std::max(find_ht(n->left), find_ht(n->right));
 	c->ht = 1 + std::max(find_ht(c->left), find_ht(c->right));
