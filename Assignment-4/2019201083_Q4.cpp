@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+//courtsey emaxx.ru
 std::vector<int> disc;
 std::vector<int> low;
 int timer = 0;
